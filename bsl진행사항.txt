@@ -1,0 +1,44 @@
+﻿2108.02.01
+
+- local server system
+  * raspberry pi3적용
+  * settup방법: https://acertainlog.wordpress.com/2015/04/29/raspberrypi-raspbian-noobs/  참고
+  * 라즈베리 Home: https://www.raspberrypi.org/downloads/
+  * 2018.02.01현재 Version: NOOBS_v2_4_5
+  * NOOBS사용
+  * serial port(GPIO14, GPIO15)사용시, /boot/cmdline.txt File에서 "console=serial0,115200"내용을 삭제
+  * python에서 /dev/serial0 로 port를 적용하면됨.
+  * 한글을 사용하기위해서는
+    1. sudo apt-get -y install ibus-hangul
+    2. sudo apt-get -y install fonts-unfonts-core를 실행함.
+  * wifi설정, 고정 ip설정 방법:http://justksh.tistory.com/entry/%EB%9D%BC%EC%A6%88%EB%B2%A0%EB%A6%AC%ED%8C%8C%EC%9D%B43Raspberry-PI-WiFi-%EC%84%A4%EC%A0%95
+  * wifi설정, http://progtrend.blogspot.kr/2017/08/raspberry-pi-wifi.html
+  * uttec lab wifi hub 비밀번호 확인후 적용
+
+  * Serial 통신관련: /bsl의 testSerial.py적용
+
+2018.02.08
+- bsl로부터 2대 입수: 16Gb, 64Gb Sd Card
+	* 64Gb는 Booting되지 않음(추후 재확인)
+	* 사물인터넷을 활용한 라즈베리파이 Book검토
+	* /boot/cmdline.txt File변환 검토--> Windows에서 직접 Access는 안됨.
+
+2018.02.13
+- Local server Ip방식 결정
+  * Cloud와 접속시 Local server는 고정 Ip로접속 한다.
+  * 고정 Ip비용은 월정액에 포함되도록 한다.
+  * Local server운영시는 월정액을 없도록 한다.
+
+2018.02.14
+- Local server 개발 진행 방향 설정
+  * python 기초 Study
+  * flask에 의한 Local server운영(Web방식)
+  * Cloud server와 연동 운영
+  * rs485입력을 trace하는 thread운영방식 적용
+  * Cloud server와의 통신 암호화 결정 및 운영
+
+2018.02.15
+- Local server 구성 Module
+  * Flask: 기본 server
+  * serial: Lora Module Interface
+  * vnc: Host Pc와 Interface()

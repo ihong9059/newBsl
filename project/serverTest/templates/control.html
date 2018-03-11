@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<body>
+<h2 style="text-align: center;">UTTEC Controller</h2>
+{% for message in form.gid.errors %}
+<div>{{ message }}</div>
+{% endfor %}
+{% for message in form.pid.errors %}
+<div>{{ message }}</div>
+{% endfor %}
+<!--
+<form action="192.168.185.2:5000/control" method=post>
+<form action="http://localhost:5000/control" method=post>
+-->
+<form action = '' method = post>
+<fieldset>
+<legend>Control Form</legend>
+{{ form.hidden_tag() }}
+<div style=font-size:20px;font-weight:bold;margin-left:50px;>
+  {{ form.gid.label }}{{ form.gid }}<br>
+  {{ form.pid.label }}{{ form.pid }}<br>
+  {{ form.level.label }}{{ form.level }}<br><br>
+  {{ form.rxtx.label }} {{ form.rxtx }}<br>
+  {{ form.sub.label }} {{ form.sub }}<br>
+  {{ form.submit }}
+</div>
+</fieldset>
+</form>
+</body>
+</html>

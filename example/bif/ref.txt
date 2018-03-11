@@ -1,0 +1,5 @@
+list
+https://docs.python.org/3/library/functions.html#all
+
+examples
+https://www.programiz.com/python-programming/methods/built-in/all

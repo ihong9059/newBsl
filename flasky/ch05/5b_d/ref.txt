@@ -1,0 +1,9 @@
+*make migration folder
+python3 hello.py db init
+
+*make auto migration script
+python3 hello.py db migrate -m "initial migrate"
+
+
+*upgrade
+python3 hello.py db upgrade

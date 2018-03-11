@@ -1,0 +1,45 @@
+﻿raspberry pi network 연결
+
+1. Lan Direct
+	* /boot/cmdline.txt file을 열고
+	* raspberry의 ethernet ip를 169.254.0.1로 변경
+	* Host Pc의 ethernet ip를 169.254.0.2로 고정
+	* raspberry reboot하여 Host Pc에서 식별하는지 확인
+
+/boot/cmdline.txt
+	rootwait ip=169.254.0.1추가
+	* Host에서 Control하기위해서는 rasp-config의 VNC와 SSH를 enable시키고
+	* raspberry를 reboot하여 접속한다.
+
+	* 보통은 아무 처리없이 wifi ap에 접속 하지만, 그렇지않으면 아래 사항을 수행해 본다.
+/etc/wpa_supplicant/wpa_supplicant.conf
+network={
+        ssid="utsol_tc140"
+        #psk="09090909"
+        pst=a4ac930ba8d2d689be85a01e4fada4d6e5cb10c7d9063828dbad6238203d5fc9
+}
+
+2. WinSCP 사용법
+	Host: /라이브러리/문서/hks/
+	raspberry: /home/pi/hks/
+
+3. booting시 python auto실행 방법
+	/etc/rc.local수정
+	python3 /home/pi/temp/serTest.py
+
+	sudo chmod 777 serTest.py로 권한 변경
+
+	#!/usr/bin/env python3
+
+4. 한글 Font install
+	* sudo apt-get -y install ibus-hangul
+	* sudo apt-get -y install fonts-unfonts-core
+	* rasp-config의 locale을 ko로 setting후 reboot하여
+
+5. qt5설치하기
+	* raspberry: sudo apt-get update
+								sudo apt-get install qt5-defult pyqt5-dev pyqt5-dev-tools
+	* windows: py(3.6.0)는 기본으로 깔림. 아니면
+										pip3 install PyQt5실행
+
+6.

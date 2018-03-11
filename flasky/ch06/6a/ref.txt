@@ -1,0 +1,26 @@
+*make migration folder
+python3 hello.py db init
+
+*make auto migration script
+python3 hello.py db migrate -m "initial migrate"
+
+
+*upgrade
+python3 hello.py db upgrade
+
+*adjust google security level
+https://myaccount.google.com/lesssecureapps
+
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+# app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+# app.config['MAIL_USERNAME'] = 'ihong9059'
+app.config['MAIL_USERNAME'] = 'ihong9059@gmail.com'
+
+# app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_PASSWORD'] = 'Hongks@6063'
+app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+app.config['FLASKY_MAIL_SENDER'] = 'ihong@uttec.co.kr'
+app.config['FLASKY_ADMIN'] = 'ihong9059@gmail.com'

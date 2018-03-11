@@ -1,0 +1,6 @@
+for lirc
+https://www.raspberrypi.org/forums/viewtopic.php?t=137317
+
+https://pypi.python.org/pypi/python-lirc/
+
+https://stackoverflow.com/questions/43690898/how-to-use-ir-remote-with-raspberry-pi-using-python
