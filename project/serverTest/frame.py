@@ -148,15 +148,16 @@ class Frame:
         if (last - first -1) == 68:
             self.clearBuffFlag = True
             result = inFrame[(first+1):last]
+            # print('result:{}'.format(result))
 
             count = 0
-            temp = list(); self.byteList1;
+            temp = list(); self.byteList1 = list();
             for s in range(1,35):
                 ss = result[count:count+2]
                 temp.append(int(ss,16))
                 self.byteList1.append(int(ss,16))
                 count += 2
-
+            # print('byteList1:{}'.format(self.byteList1))
             # print(self.byteList)
             temp = temp[0:(len(temp)-2)]
             # print(self.byteList)
@@ -172,15 +173,18 @@ class Frame:
                     i[0] += self.byteList1[count]*256
                 else:
                     i[0] = self.byteList1[count]
+                # print('v:{}'.format(i[0]))
                 count += 1
 
+            # print('frameList1:{}'.format(self.frameList1))
+            # print('Power:{} Photo:{}'.format(self.dtime1, self.time1))
             if crcResult == self.crc1[0]:
-                print('Crc check Ok')
+                print('Crc Ok --> Power:{} Photo:{}'.format(self.dtime1, self.time1))
+                # print('Crc check Ok:{},{}'.format(crcResult, self.crc1[0]))
                 newFrameFlag = True
                 self.setFrame1()
-                print('Power:{} Photo:{}'.format(self.dtime1, self.time1))
             else:
-                print('Crc error')
+                print('Crc error:{},{}'.format(crcResult, self.crc1[0]))
             return True
 
         else:

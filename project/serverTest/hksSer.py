@@ -67,7 +67,7 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
-        port = 'COM12'
+        port = 'COM3'
         # port = 'COM38'
         # port = 'COM62'
         count = 0
@@ -88,9 +88,10 @@ class serThread(Thread):
 
                 if self.readFlag:
                     count += 1
+                    # print('serReceived:{}'.format(self.readStr))
+                    print(self.readStr)
                     self.serFrame.parseFrame(self.readStr)
 
-                    print(self.readStr, sep = '')
                     self.readFlag = False
                     if self.readStr.find('Quit Serial') != -1:
                         break
