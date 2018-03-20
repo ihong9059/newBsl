@@ -20,8 +20,15 @@
   {{ form.gid.label }}{{ form.gid }}<br>
   {{ form.pid.label }}{{ form.pid }}<br>
   {{ form.level.label }}{{ form.level }}<br><br>
-  {{ form.rxtx.label }} {{ form.rxtx }}<br>
-  {{ form.sub.label }} {{ form.sub }}<br>
+  {{ form.changed_gid.label }}{{ form.changed_gid }}<br>
+  {{ form.changed_pid.label }}{{ form.changed_pid }}<br><br>
+  <div class="">
+    {{ form.rxtx.label }} {{ form.rxtx }}
+    {{ form.changed_rxtx.label }} {{ form.changed_rxtx }}
+  </div>
+  <div class="">
+    {{ form.sub.label }} {{ form.sub }}
+  </div>
   {{ form.submit }}
 </div>
 </fieldset>

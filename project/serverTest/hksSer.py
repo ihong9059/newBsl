@@ -67,7 +67,7 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
-        port = 'COM3'
+        port = 'COM7'
         # port = 'COM38'
         # port = 'COM62'
         count = 0

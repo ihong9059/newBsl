@@ -26,22 +26,27 @@ manager = Manager(app)
 
 class ControlForm(FlaskForm):
     gid = IntegerField("Group Id:   ",[validators.Required("Please enter your name.")])
-    pid = IntegerField("Private Id: ",[validators.Required("Please enter your name.")])
-    level = IntegerField("Level:     ",[validators.Required("Please enter your name.")])
-    # Power = IntegerField("Power:     ")
-    # Status = IntegerField("Status:     ")
-    # Photo = IntegerField("Photo: ")
+    pid = IntegerField("Private Id: ",[])
+    # pid = IntegerField("Private Id: ",[validators.Required("Please enter your name.")])
+    level = IntegerField("Level:     ",[])
+
+    changed_gid = IntegerField("Change Group Id:   ",[validators.Required("Please enter your name.")])
+    changed_pid = IntegerField("Change Private Id: ",[validators.Required("Please enter your name.")])
 
     rxtx = RadioField('Destination RxTx', choices=[('1','Rx'),
-    ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
+    ('2','Tx'), ('4','SRx'), ('32','Gateway')])
 
-    sub = RadioField('Command', choices=[('103','Control'),
-    ('104','NewSet'), ('109','Alternative'), ('110','Status'), ('101','Power')])
+    changed_rxtx = RadioField('changed RxTx', choices=[('1','Rx'),
+    ('2','Tx'), ('4','SRx'), ('32','Gateway')])
+
+
+    sub = RadioField('Command', choices=[('103','Control'), ('108','GroupChange'),
+    ('104','AutoMode'), ('109','Alternative'), ('102','Monitor'), ('110','Status'), ('101','Power')])
 
     submit = SubmitField("Send")
-    subDict = dict([('103','Control'),
-    ('104','NewSet'), ('109','Alternative'),
-    ('110','Status'), ('101','Power')])
+    subDict = dict([('103','Control'), ('108','GroupChange'),
+    ('104','AutoMode'), ('109','Alternative'),
+    ('102','Monitor'), ('110','Status'), ('101','Power')])
 
     rxtxDict = dict([('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
@@ -150,9 +155,6 @@ def control():
             gid = request.form['gid']
             pid = request.form['pid']
             level = request.form['level']
-            # Power = request.form['Power']
-            # Status = request.form['Status']
-            # Photo = request.form['Photo']
 
             rxtx = request.form['rxtx']
             sub = request.form['sub']
@@ -160,6 +162,15 @@ def control():
             dt = datetime.now()
             print(dt.date(), dt.time())
             # print('gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level,
+            # print(type(form.subDict[sub]))
+            if(form.subDict[sub] == 'GroupChange'):
+                cGid = int(request.form['changed_gid'])
+                cPid = int(request.form['changed_pid'])
+                cRxTx = int(request.form['changed_rxtx'])
+                print('Now Group Change')
+                myFrame.rate[0] = cPid; myFrame.status[0] = cRxTx;
+                myFrame.dtime[0] = cGid;
+
             print('gid:{}, pid:{}, level:{}, rxtx:{}, sub:{}'.format(gid, pid, level,
              form.rxtxDict[rxtx], form.subDict[sub]))
              # returnSubLabel(sub)))
@@ -178,7 +189,8 @@ def control():
         return render_template('control.html', form=form)
 
 if __name__ == '__main__':
-    app.run(debug=True)
     print('Now Run')
-    # manager.run()
+    # app.run(debug=True)
+    manager.run()
 # python3 hello.py runserver --host 0.0.0.0
+# py bsl.py

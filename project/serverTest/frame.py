@@ -137,6 +137,20 @@ class Frame:
     def clearNewFrameFalg(self):
         self.newFrameFlag
 
+    def printSubName(self, sub):
+        if(sub == 103):
+            print('Control Ack')
+        elif( sub == 108 ):
+            print('GroupChange Ack')
+        elif sub == 104:
+            print('AutoMode Ack')
+        elif sub == 110:
+            print('Status Ack')
+        elif sub == 101:
+            print('PowerRead Ack')
+        else:
+            print('Sub Commend Error')
+
     def parseFrame(self, inFrame):
         first = inFrame.rfind('{')
         last = inFrame.rfind('}')
@@ -179,8 +193,12 @@ class Frame:
             # print('frameList1:{}'.format(self.frameList1))
             # print('Power:{} Photo:{}'.format(self.dtime1, self.time1))
             if crcResult == self.crc1[0]:
-                print('Crc Ok --> Power:{} Photo:{}'.format(self.dtime1, self.time1))
-                # print('Crc check Ok:{},{}'.format(crcResult, self.crc1[0]))
+                print('Crc Ok --> Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
+                    (self.high1[0] + self.low1[0]*256), self.rate1[0]))
+                self.printSubName(self.sub1[0])
+                print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
+                print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
+                    self.dtime1[0]*0x10000))
                 newFrameFlag = True
                 self.setFrame1()
             else:
