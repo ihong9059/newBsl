@@ -1,0 +1,14 @@
+1. NOOBS Download
+
+2. 한글 Font install
+	* sudo apt-get -y install ibus-hangul
+	* sudo apt-get -y install fonts-unfonts-core
+	* rasp-config의 locale을 ko로 setting후 reboot하여
+
+3. install samba
+  * sudo apt-get update
+  * sudo apt-get install samba
+
+4. using WinSCP in windows
+
+5. python3-> version 3.5.3
