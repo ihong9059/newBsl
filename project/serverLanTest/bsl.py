@@ -11,11 +11,10 @@ from flask_script import Manager
 from frame import Frame
 
 from threading import Thread, Lock
-from hksSer import serThread, serVar
+from hksSer import serThread
 import time
 
 mySer = serThread()
-mySerVar = serVar
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -51,77 +50,7 @@ class ControlForm(FlaskForm):
     rxtxDict = dict([('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
 
-class NameForm(FlaskForm):
-    name = StringField('What is your name?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
-
-@app.route('/index', methods=['GET', 'POST'])
-def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('Looks like you have changed your name!')
-        session['name'] = form.name.data
-        return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
-
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    form = ControlForm()
-    if form.validate_on_submit():
-        print('validate_on_submit')
-        myFrame = Frame()
-        myFrame.setFrame()
-        print(myFrame.getFrame())
-        print('bsl frame test')
-    return render_template('control.html', form=form)
-
-class testThread(Thread):
-    def __init__(self):
-        print('Start testThread')
-        Thread.__init__(self)
-    def run(self):
-        while True:
-            time.sleep(1) #for thread, very important
-            if mySer.myVar.readFlag:
-                mySer.myVar.readFlag = False
-                print('var:{}'.format(mySerVar.readFlag))
-                mySer.send(mySer.readStr)
-                print('self.myVar.readFlag')
-        print('End of testThread')
-
-testThreadFirstFlag = True
-@app.route('/new', methods=['GET', 'POST'])
-def new():
-    form = ControlForm()
-    global testThreadFirstFlag
-    if testThreadFirstFlag:
-        print('Generate testThread')
-        testThreadFirstFlag = False
-        myThread = testThread()
-        myThread.start()
-    return render_template('control.html', form=form)
-
-@app.route('/stop', methods=['GET', 'POST'])
-def stop():
-    form = ControlForm()
-    if mySer.getSerAlive():
-        mySer.send('Quit Serial')
-    else:
-        print('at start Finished Serial')
-    return render_template('control.html', form=form)
-
-@app.route('/start', methods=['GET', 'POST'])
+# @app.route('/start', methods=['GET', 'POST'])
 def startSer():
     form = ControlForm()
     if mySer.serFirstFlag:
@@ -161,8 +90,6 @@ def control():
 
             dt = datetime.now()
             print(dt.date(), dt.time())
-            # print('gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level,
-            # print(type(form.subDict[sub]))
             if(form.subDict[sub] == 'GroupChange'):
                 cGid = int(request.form['changed_gid'])
                 cPid = int(request.form['changed_pid'])
@@ -174,9 +101,9 @@ def control():
             print('gid:{}, pid:{}, level:{}, rxtx:{}, sub:{}'.format(gid, pid, level,
              form.rxtxDict[rxtx], form.subDict[sub]))
              # returnSubLabel(sub)))
-            writeStr = str(dt.date())+':'+str(dt.time())
+            writeStr = 'Send:: ' + str(dt.date()) + ':' + str(dt.time())
             writeStr += '--->gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level, returnSubLabel(sub))
-            FileSave('outHex.txt', writeStr+'\n')
+            FileSave('send.txt', writeStr+'\n')
 
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid)); myFrame.setLevel(int(level));
             myFrame.setRxTx(int(rxtx)); myFrame.setSub(int(sub))

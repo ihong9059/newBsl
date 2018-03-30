@@ -10,46 +10,6 @@ class Frame:
         high, low, level, Type, rate, status, dtime,
         cmd, sub, time,
         srcPid, dstPid, srcGid, dstGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
-    # hks
-    def getPid(self):
-        return self.pid[0]
-    def setPid(self, vaule):
-        pid[0] = vaule
-
-    def getRxTx(self):
-        return self.rxtx[0]
-    def setRxTx(self, vaule):
-        rxtx[0] = vaule
-
-    def getGid(self):
-        return self.gid[0]
-    def setGid(self, vaule):
-        self.gid[0] = vaule
-
-    def getHigh(self):
-        return self.high[0]
-    def setHigh(self, vaule):
-        high[0] = vaule
-
-    def getLow(self):
-        return self.low[0]
-    def setLow(self, vaule):
-        low[0] = vaule
-
-    def getLevel(self):
-        return self.level[0]
-    def setLevel(self, vaule):
-        level[0] = vaule
-
-    def getCmd(self):
-        return self.cmd[0]
-    def setCmd(self, vaule):
-        cmd[0] = vaule
-
-    def getSub(self):
-        return self.sub[0]
-    def setSub(self, vaule):
-        sub[0] = vaule
 
     def getFrame(self):
         return self.frame

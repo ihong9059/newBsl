@@ -12,3 +12,12 @@
 4. using WinSCP in windows
 
 5. python3-> version 3.5.3
+
+6. python Module install
+	pip3 install module __name__
+	pip3 install flask-script
+	pip3 install flask-wtf
+	pip3 install flask-moment
+	pip3 install flask-bootstrap
+
+7. Bluetooth setup

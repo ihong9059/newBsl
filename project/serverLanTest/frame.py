@@ -1,4 +1,6 @@
 # eMst: 64, eGw: 32,
+from datetime import datetime
+
 class Frame:
     Master = 64; ServerReq = 100
 
@@ -38,43 +40,27 @@ class Frame:
     clearBuffFlag = False
     newFrameFlag = False
 
-    def getPid(self):
-        return self.pid[0]
     def setPid(self, vaule):
         self.pid[0] = vaule
 
-    def getRxTx(self):
-        return self.rxtx[0]
     def setRxTx(self, vaule):
         self.rxtx[0] = vaule
 
-    def getGid(self):
-        return self.gid[0]
     def setGid(self, vaule):
         self.gid[0] = vaule
 
-    def getHigh(self):
-        return self.high[0]
     def setHigh(self, vaule):
         self.high[0] = vaule
 
-    def getLow(self):
-        return self.low[0]
     def setLow(self, vaule):
         self.low[0] = vaule
 
-    def getLevel(self):
-        return self.level[0]
     def setLevel(self, vaule):
         self.level[0] = vaule
 
-    def getCmd(self):
-        return self.cmd[0]
     def setCmd(self, vaule):
         self.cmd[0] = vaule
 
-    def getSub(self):
-        return self.sub[0]
     def setSub(self, vaule):
         self.sub[0] = vaule
 
@@ -105,11 +91,12 @@ class Frame:
             else:
                 self.frame += '%02x' % numList[0]
         self.frame += '}'
-        with open('outHex.txt','a') as fp:
+        with open('send.txt','a') as fp:
             print(self.frame, file = fp)
         print(self.frame)
 
-    def setFrame1(self):
+    def setReceiveFrame(self):
+        dt = datetime.now()
         self.setCrcFrame(self.frameList1)
         self.frame1 = '{'
         for numList in self.frameList1:
@@ -119,23 +106,16 @@ class Frame:
             else:
                 self.frame1 += '%02x' % numList[0]
         self.frame1 += '}'
-        with open('outHex1.txt','a') as fp:
+        with open('receive.txt','a') as fp:
+            writeStr = 'Receive:: ' + str(dt.date()) + ':' + str(dt.time())
+            print(writeStr, file = fp)
             print(self.frame1, file = fp)
         print(self.frame1)
-
-    def getClearBuff(self):
-        return self.clearBuff
 
     def getCrc(self, data):
         from crc import CRC
         crc16 = CRC()
         return crc16.update(data)
-
-    def getNewFrameFlag(self):
-        return self.newFrameFlag
-
-    def clearNewFrameFalg(self):
-        self.newFrameFlag
 
     def printSubName(self, sub):
         if(sub == 103):
@@ -154,7 +134,7 @@ class Frame:
     def parseFrame(self, inFrame):
         first = inFrame.rfind('{')
         last = inFrame.rfind('}')
-        if last > 70:
+        if last > 150:
             self.clearBuffFlag = True
         else:
             self.clearBuffFlag = False
@@ -162,7 +142,6 @@ class Frame:
         if (last - first -1) == 68:
             self.clearBuffFlag = True
             result = inFrame[(first+1):last]
-            # print('result:{}'.format(result))
 
             count = 0
             temp = list(); self.byteList1 = list();
@@ -171,13 +150,9 @@ class Frame:
                 temp.append(int(ss,16))
                 self.byteList1.append(int(ss,16))
                 count += 2
-            # print('byteList1:{}'.format(self.byteList1))
-            # print(self.byteList)
             temp = temp[0:(len(temp)-2)]
-            # print(self.byteList)
             crcIn = bytearray(temp)
             crcResult = self.getCrc(crcIn)
-            # print(temp)
 
             count = 0
             for i in self.frameList1:
@@ -187,11 +162,8 @@ class Frame:
                     i[0] += self.byteList1[count]*256
                 else:
                     i[0] = self.byteList1[count]
-                # print('v:{}'.format(i[0]))
                 count += 1
 
-            # print('frameList1:{}'.format(self.frameList1))
-            # print('Power:{} Photo:{}'.format(self.dtime1, self.time1))
             if crcResult == self.crc1[0]:
                 print('Crc Ok --> Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
                     (self.high1[0] + self.low1[0]*256), self.rate1[0]))
@@ -199,14 +171,13 @@ class Frame:
                 print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
                 print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
                     self.dtime1[0]*0x10000))
-                newFrameFlag = True
-                self.setFrame1()
+                self.newFrameFlag = True
+                self.setReceiveFrame()
             else:
                 print('Crc error:{},{}'.format(crcResult, self.crc1[0]))
             return True
 
         else:
-            # print('Fail Parse')
             return False
 
     def testFrame(self):
@@ -228,49 +199,3 @@ if __name__ == '__main__':
     a = frame.getFrame()
     aa = bytearray(a, 'ascii')
     print(aa)
-
-    # str_List = '{'
-    # for numList in myFrame:
-    #     if(numList[1]==2):
-    #         str_List += '%04x' % numList[0]
-    #     else:
-    #         str_List += '%02x' % numList[0]
-    # str_List += '}'
-    # print(str_List)
-    #
-    # frame.testFrame()
-
-
-
-# with open("dict.txt","w") as f:
-#     print(str_List, file = f)
-#
-# import crc16
-# print(crc16.crc16xmodem(b'123456789'))
-# import numpy as np
-#
-# def crc16(data: bytes):
-#     '''
-#     CRC-16-CCITT Algorithm
-#     '''
-#     data = bytearray(data)
-#     poly = 0x8408
-#     crc = 0xFFFF
-#     for b in data:
-#         cur_byte = 0xFF & b
-#         for _ in range(0, 8):
-#             if (crc & 0x0001) ^ (cur_byte & 0x0001):
-#                 crc = (crc >> 1) ^ poly
-#             else:
-#                 crc >>= 1
-#
-#             cur_byte >>= 1
-#
-#     crc = (~crc & 0xFFFF)
-#     crc = (crc << 8) | ((crc >> 8) & 0xFF)
-#
-#     return np.uint16(crc)
-#
-# values = [0x81, 0x12, 0xC0, 0x00, 0x01, 0x05]
-# string = "".join(chr(i) for i in values)
-# print (crc16(string))

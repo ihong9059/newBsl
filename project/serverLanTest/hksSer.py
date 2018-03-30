@@ -10,18 +10,8 @@ from frame import Frame
 # serialName = 'COM62'
 # ser = serial.Serial(serialName, 115200, timeout=0)
 # print('serial port is {}'.format(ser.portstr))
-class serVar:
-    serFirstFlag = True
-    serAlive = False
-    writeFlag = False
-    readFlag = False
-    readStr = ''
-    writeStr = ''
-
-myVar = serVar()
 
 class serThread(Thread):
-    myVar = serVar()
     serFrame = Frame()
 
     serFirstFlag = True
@@ -30,6 +20,8 @@ class serThread(Thread):
     readFlag = False
     readStr = ''
     writeStr = ''
+    newFrameFlag = False
+    returnFrame = ''
 
     def __init__(self):
         print('Now Start SerialThread')
@@ -38,28 +30,7 @@ class serThread(Thread):
     def send(self, writeStr):
         self.writeStr = writeStr
         self.writeFlag = True
-        myVar.writeFlag = True
-
-    def getReadFlag(self):
-        return self.readFlag
-
-    def clearReadFlag(self):
-        self.readFlag = False
-
-    def getReadStr(self):
-        return self.readStr
-
-    def clearWriteFlag(self):
-        self.writeFlag = False
-
-    def getWriteFlag(self):
-        return self.writeFlag
-
-    def getWriteStr(self):
-        return self.writeStr
-
-    def getSerAlive(self):
-        return self.serAlive
+        print('ser write')
 
     def FileSave(self,filename,content):
         import io
@@ -67,9 +38,8 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
+        # port = '/dev/ttyS0'
         port = 'COM7'
-        # port = 'COM38'
-        # port = 'COM62'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
@@ -79,41 +49,30 @@ class serThread(Thread):
             while True:
                 time.sleep(0.001)
                 try:
-                    self.readStr=str(ser.readline(),'utf-8')
-                    if self.readStr != '':
+                    bytesToRead = ser.inWaiting()
+                    if bytesToRead:
+                        sTemp = str(ser.read(bytesToRead),'utf-8')
+                        self.readStr += sTemp;
+                        if bytesToRead == 1:
+                            print(sTemp)
+                        if self.readStr.find('}') != -1:
+                            if self.serFrame.parseFrame(self.readStr):
+                                self.returnFrame =  self.serFrame.frame1
+                                self.readStr = ''
+                                self.newFrameFlag = True
                         self.readFlag = True
-                        self.myVar.readFlag = True
                 except:
                     print('Error Data')
 
-                if self.readFlag:
-                    count += 1
-                    # print('serReceived:{}'.format(self.readStr))
-                    print(self.readStr)
-                    self.serFrame.parseFrame(self.readStr)
-
-                    self.readFlag = False
-                    if self.readStr.find('Quit Serial') != -1:
-                        break
-
                 if self.writeFlag:
-                    ser.write(bytearray(self.writeStr,'ascii'))
+                    ser.write(bytearray(self.writeStr,'utf-8'))
                     self.writeFlag = False
-                    self.myVar.writeFlag = False
 
         self.serAlive = False
         # self.serFirstFlag = True
         print('End of inThread')
 
 class testThread(Thread):
-    def __init__(self):
-        Thread.__init__(self)
-    def run(self):
-        while True:
-            pass
-        print('End of testThread')
-
-class testThread1(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
