@@ -14,10 +14,40 @@
 5. python3-> version 3.5.3
 
 6. python Module install
-	pip3 install module __name__
+	ex)pip3 install module __name__
 	pip3 install flask-script
 	pip3 install flask-wtf
 	pip3 install flask-moment
 	pip3 install flask-bootstrap
 
 7. Bluetooth setup
+sudo nano /lib/systemd/system/rfcomm.service
+
+[Uint]
+Description=RFCOMM service for Bluetooth
+After=bluetooth.service
+
+[Service]
+ExecStart=/usr/bin/rfcomm watch all &
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable rfcomm.service
+
+sudo reboot
+
+ps -ef|grep 'rfcomm'
+
+echo 'This is from RaspberryPi3'>/dev/rfcomm0
+
+cat /dev/rfcomm0
+
+8. Serial setup
+sudo nano /boot/config.txt --> enable_uart=1
+sudo nano /boot/cmdline.txt --> delete console=serial0, 115200
+Raspberry Pi Configuration, Interfaces Serial Disable
+
+9. GPIO
+sudo apt-get install rpi.gpio
+gpio readall

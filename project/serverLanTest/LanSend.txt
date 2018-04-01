@@ -37,3 +37,9 @@ From Gateway:192.168.40.3 return: when 2018-03-30:16:06:40.075079
 From Gateway:192.168.40.3 return: when 2018-03-30:16:30:11.759447 
 {0a2001ff0700640100ff01ff01006567ffff00400000ffffffffffffffffffff9fe0}
 
+From Gateway:192.168.185.2 return: when 2018-03-31:13:48:40.619168 
+{No reveived return data from Gateway}
+
+From Gateway:192.168.185.2 return: when 2018-03-31:13:48:50.953759 
+{No reveived return data from Gateway}
+

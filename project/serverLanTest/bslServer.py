@@ -29,15 +29,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         next = time.time() + 2
         while end:
             time.sleep(0.001)
-            if self.myFrame.newFrameFlag:
-                print('************self.myFrame.newFrameFlag')
-                self.myFrame.newFrameFlag = False
-
             if next < time.time() or mySer.newFrameFlag :
                 end = False
                 if mySer.newFrameFlag:
                     print(mySer.returnFrame)
                     self.data = mySer.returnFrame
+                else:
+                    self.data = "{No reveived return data from Gateway}"
 
         testStr = "{} return: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
@@ -52,7 +50,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # mySer.send(testStr)
 
 if __name__ == "__main__":
-    HOST, PORT = "192.168.40.3", 40007
+    HOST, PORT = "192.168.185.2", 40007
+    # HOST, PORT = "192.168.40.3", 40007
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
     mySer.start()
     print('Activate the server; this will keep running until you')

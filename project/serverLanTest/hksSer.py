@@ -39,7 +39,8 @@ class serThread(Thread):
 
     def run(self):
         # port = '/dev/ttyS0'
-        port = 'COM7'
+        # port = 'COM7'
+        port = 'COM38'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
