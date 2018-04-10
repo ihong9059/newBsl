@@ -42,4 +42,13 @@ network={
 	* windows: py(3.6.0)는 기본으로 깔림. 아니면
 										pip3 install PyQt5실행
 
-6.
+6. Auto Run
+sudo nano launcher.sh
+sudo chmod 755 launcher.sh
+sudo sh launcher.sh
+
+sudo mkdir logs
+sudo crontab -e
+	@reboot sh /home/pi/launcher.sh >/home/pi/logs/cronlog 2>&1
+
+	
