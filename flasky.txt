@@ -1,0 +1,23 @@
+git clone https://github.com/miguelgrinberg/flasky.git
+
+py -m pip install flask-wtf
+
+flask-script
+flask-bootstrap
+flask-moment
+flask-sqlalchemy
+flask-migrate
+
+db
+
+py hello.py db init
+
+py hello.py db migrate -m "initial migration"
+py hello.py db upgrade
+
+
+mail
+py -m pip install flask-mail
+
+Login
+py -m pip install flask-login
