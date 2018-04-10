@@ -51,3 +51,19 @@ Raspberry Pi Configuration, Interfaces Serial Disable
 9. GPIO
 sudo apt-get install rpi.gpio
 gpio readall
+
+10. wifi
+ipTime: default N2plus i(2GHz)
+rasberrypi is not acceptable at 5GHz Band
+ip: 192.166.0.1
+how to setup ip address to 192.166.0.3 ?
+at router, setup ip address and mac address up
+
+I went into my /etc/network/interfaces and edited the file to add my SSID and Network Password
+* don't use the old model(ipTime N104T)
+
+Raspberry Pi wifi 호환성 검토완료 Model
+ipTIME N2plus-i(표준)
+ipTIME A604-V3
+ipTIME CCD-IPTIME
+ipTIME N704-V3

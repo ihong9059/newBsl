@@ -6,7 +6,7 @@ from frame import Frame
 
 mySer = serThread()
 
-tcpCount = 0
+# tcpCount = 0
 class MyTCPHandler(socketserver.BaseRequestHandler):
     myFrame = Frame()
 
@@ -18,10 +18,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         dt = datetime.now()
         # self.request is the TCP socket connected to the client
+        print('------------------ server Start ----------------------')
         self.data = self.request.recv(1024).strip()
         testStr = "{} wrote: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
         testStr += str(self.data,'utf-8') + '\n'
+        print(testStr)
         self.FileSave('LanReceive.txt', 'From Server:'+testStr+'\n')
         mySer.send(str(self.data,'utf-8'))
 
@@ -32,10 +34,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             if next < time.time() or mySer.newFrameFlag :
                 end = False
                 if mySer.newFrameFlag:
-                    print(mySer.returnFrame)
+                    print('from GW:'+mySer.returnFrame)
                     self.data = mySer.returnFrame
+                    mySer.newFrameFlag = False
                 else:
-                    self.data = "{No reveived return data from Gateway}"
+                    self.data = "{No received return data from Gateway}"
 
         testStr = "{} return: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
@@ -44,13 +47,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
         sendStr = bytearray(self.data.upper(),'utf-8')
         self.request.sendall(sendStr)
-        global tcpCount
-        tcpCount += 1
-        testStr = 'Count = {}\n\r'.format(tcpCount)
-        # mySer.send(testStr)
+        print('return:'+str(sendStr))
+        print('------------------ server End ----------------------')
+        self.data = self.request.recv(1024).strip()
 
 if __name__ == "__main__":
-    HOST, PORT = "192.168.185.2", 40007
+    # HOST, PORT = "locallhost", 40007
+    HOST, PORT = "192.166.0.3", 40007
+    # HOST, PORT = "192.168.40.3", 40007
+    # HOST, PORT = "192.166.0.3", 40007
     # HOST, PORT = "192.168.40.3", 40007
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
     mySer.start()

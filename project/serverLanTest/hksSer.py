@@ -30,7 +30,7 @@ class serThread(Thread):
     def send(self, writeStr):
         self.writeStr = writeStr
         self.writeFlag = True
-        print('ser write')
+        # print('ser write')
 
     def FileSave(self,filename,content):
         import io
@@ -38,15 +38,15 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
-        # port = '/dev/ttyS0'
+        port = '/dev/ttyS0'
+        # port = 'COM5'
         # port = 'COM7'
-        port = 'COM38'
+        # port = 'COM27'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
             self.serDevice = ser
             self.serAlive = True
-            count = 0
             while True:
                 time.sleep(0.001)
                 try:
@@ -55,7 +55,10 @@ class serThread(Thread):
                         sTemp = str(ser.read(bytesToRead),'utf-8')
                         self.readStr += sTemp;
                         if bytesToRead == 1:
-                            print(sTemp)
+                            print(sTemp, end='')
+                        else:
+                            print(':'+sTemp)
+
                         if self.readStr.find('}') != -1:
                             if self.serFrame.parseFrame(self.readStr):
                                 self.returnFrame =  self.serFrame.frame1

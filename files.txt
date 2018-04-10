@@ -1,0 +1,6 @@
+/serverLanTest
+
+bslClient.py: general socket bslClient
+bslCtr.py: Web Control server -> bslCtrClient.py -> bslServer.py
+
+bslServer.py: general socket control server

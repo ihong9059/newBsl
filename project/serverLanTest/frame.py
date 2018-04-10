@@ -3,6 +3,8 @@ from datetime import datetime
 
 class Frame:
     Master = 64; ServerReq = 100
+    returnPowerOrStatus = ''
+    returnMac = ''
 
     pidOrg = [0,1]; rxtxOrg = [Master,1];
     sensor = [1,1]; micom = [1,1]; gidOrg = [0,2]
@@ -165,12 +167,26 @@ class Frame:
                 count += 1
 
             if crcResult == self.crc1[0]:
-                print('Crc Ok --> Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
-                    (self.high1[0] + self.low1[0]*256), self.rate1[0]))
+                print('Crc Ok, Passed')
+                if self.sub1[0] == 101:
+                    print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
+                        self.dtime1[0]*0x10000))
+                    self.returnPowerOrStatus = 'Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
+                        self.dtime1[0]*0x10000)
+                elif self.sub1[0] == 110:
+                    print('Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
+                        (self.high1[0] + self.low1[0]*256), self.rate1[0]))
+                    self.returnPowerOrStatus = 'Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
+                        (self.high1[0] + self.low1[0]*256), self.rate1[0])
+                else:
+                    self.returnPowerOrStatus = 'Control Command'
+
                 self.printSubName(self.sub1[0])
                 print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
-                print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
-                    self.dtime1[0]*0x10000))
+                print('{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
+                    self.tbd21[0]))
+                self.returnMac = '{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
+                    self.tbd21[0])
                 self.newFrameFlag = True
                 self.setReceiveFrame()
             else:
@@ -179,6 +195,53 @@ class Frame:
 
         else:
             return False
+
+    # def parseReturnFrame(self, inFrame):
+    #     first = inFrame.rfind('{')
+    #     last = inFrame.rfind('}')
+    #
+    #     if (last - first -1) == 68:
+    #         result = inFrame[(first+1):last]
+    #
+    #         count = 0
+    #         temp = list(); self.byteList1 = list();
+    #         for s in range(1,35):
+    #             ss = result[count:count+2]
+    #             temp.append(int(ss,16))
+    #             self.byteList1.append(int(ss,16))
+    #             count += 2
+    #
+    #         temp = temp[0:(len(temp)-2)]
+    #         crcIn = bytearray(temp)
+    #         crcResult = self.getCrc(crcIn)
+    #
+    #         count = 0
+    #         for i in self.frameList1:
+    #             if i[1] == 2:
+    #                 i[0] = self.byteList1[count]
+    #                 count += 1
+    #                 i[0] += self.byteList1[count]*256
+    #             else:
+    #                 i[0] = self.byteList1[count]
+    #             count += 1
+    #
+    #         if crcResult == self.crc1[0]:
+    #             print('Crc Ok --> Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
+    #                 (self.high1[0] + self.low1[0]*256), self.rate1[0]))
+    #             self.printSubName(self.sub1[0])
+    #             print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
+    #             print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
+    #                 self.dtime1[0]*0x10000))
+    #             print('{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
+    #                 self.tbd21[0]))
+    #             self.newFrameFlag = True
+    #             self.setReceiveFrame()
+    #         else:
+    #             print('Crc error:{},{}'.format(crcResult, self.crc1[0]))
+    #         return True
+    #
+    #     else:
+    #         return False
 
     def testFrame(self):
         print('----------- testFrame --------------')

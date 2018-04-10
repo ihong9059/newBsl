@@ -1,4 +1,4 @@
 cd /
 cd newbsl/project/serverLanTest
 
-py bslServer.py
+py bslServer.py 

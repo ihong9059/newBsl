@@ -1,4 +1,5 @@
-from flask import Flask, render_template, session, redirect, url_for, flash, request
+from flask import Flask, render_template, session, redirect
+from flask import url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
@@ -11,10 +12,9 @@ from flask_script import Manager
 from frame import Frame
 
 from threading import Thread, Lock
-from hksSer import serThread
+# from hksSer import serThread
 import time
-
-mySer = serThread()
+import bslCtrClient
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -50,16 +50,6 @@ class ControlForm(FlaskForm):
     rxtxDict = dict([('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
 
-# @app.route('/start', methods=['GET', 'POST'])
-def startSer():
-    form = ControlForm()
-    if mySer.serFirstFlag:
-        mySer.serFirstFlag = False
-        mySer.start()
-        print('Now start my Serial')
-        time.sleep(1)
-    return render_template('control.html', form=form)
-
 def FileSave(filename,content):
     import io
     with open(filename, "a+") as myfile:
@@ -69,10 +59,12 @@ def returnSubLabel(sub):
     form = ControlForm()
     return form.subDict[sub]
 
+myFrame = Frame()
+
 from datetime import datetime
 @app.route('/', methods=['GET', 'POST'])
 def control():
-    startSer()
+    # startSer()
     form = ControlForm()
     if request.method == 'POST':
         if form.validate() == False:
@@ -80,7 +72,8 @@ def control():
             print('form.validate() == False:')
             return render_template('control.html', form=form)
         else:
-            myFrame = Frame()
+            # myFrame = Frame()
+            global myFrame
             gid = request.form['gid']
             pid = request.form['pid']
             level = request.form['level']
@@ -113,9 +106,26 @@ def control():
             myFrame.setRxTx(int(rxtx)); myFrame.setSub(int(sub))
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid));
             myFrame.setFrame()
+            print('------------ Ctr Start ----------------')
+            bslCtrClient.sendSocket(myFrame.getFrame())
+            # print('bslCtrClient.sendSocket and wait return')
+            timeOutCount = 0
+            while bslCtrClient.receiveFlag == False:
+                time.sleep(0.001)
+                timeOutCount += 1
+                if timeOutCount > 1000:
+                    break
 
-            # bslCtrClient.sendSocket(myFrame.getFrame())
-            mySer.send(myFrame.getFrame())
+            if bslCtrClient.receiveFlag:
+                # print('I received frame from gateway')
+                flash('Result::'+bslCtrClient.returnPowerOrStatus)
+                flash('Mac Add:'+bslCtrClient.returnMac)
+                bslCtrClient.receiveFlag = False
+            else:
+                print('Time out')
+                flash('Time out')
+            # mySer.send(myFrame.getFrame())
+            print('------------ Ctr End ----------------')
             return render_template('control.html', form=form)
 
     elif request.method == 'GET':
