@@ -28,7 +28,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         mySer.send(str(self.data,'utf-8'))
 
         end = True
-        next = time.time() + 2
+        next = time.time() + 1
         while end:
             time.sleep(0.001)
             if next < time.time() or mySer.newFrameFlag :
