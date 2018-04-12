@@ -1,5 +1,12 @@
 <!doctype html>
 <html>
+<head>
+<script>
+function outputUpdate(age) {
+    document.querySelector('#selected-age').value = age;
+}
+</script>
+</head>
 <body>
 <h2 style="text-align: center;">UTTEC Controller</h2>
 {% for message in form.gid.errors %}
@@ -11,6 +18,18 @@
 <!--
 <form action="192.168.185.2:5000/control" method=post>
 <form action="http://localhost:5000/control" method=post>
+{% for subfield in form.rxtx %}
+<tr>
+    <td>{{ subfield }}</td>
+    <td>{{ subfield.label }}</td>
+</tr>
+{% endfor %}
+<div class="">
+  {{ form.rxtx.label }} {{ form.rxtx }}
+</div>
+<div class="">
+  {{ form.sub.label }} {{ form.sub }}
+</div>
 -->
 {% for message in get_flashed_messages() %}
 <div class="alert alert-warning">
@@ -24,17 +43,32 @@
 <legend>Control Form</legend>
 {{ form.hidden_tag() }}
 <div style=font-size:20px;font-weight:bold;margin-left:50px;>
-  {{ form.gid.label }}{{ form.gid }}<br>
+  {{ form.gid.label }}{{ form.gid }}
   {{ form.pid.label }}{{ form.pid }}<br>
   {{ form.level.label }}{{ form.level }}<br><br>
   {{ form.changed_gid.label }}{{ form.changed_gid }}<br>
   {{ form.changed_pid.label }}{{ form.changed_pid }}<br><br>
-  <div class="">
-    {{ form.rxtx.label }} {{ form.rxtx }}
-  </div>
-  <div class="">
-    {{ form.sub.label }} {{ form.sub }}
-  </div>
+
+  <h3>RxTx Role</h3>
+  {% for subfield in form.rxtx %}
+  <tr>
+      <td>{{ subfield }}</td>
+      <td>{{ subfield.label }}</td>
+  </tr>
+  {% endfor %}<br>
+
+  <h3>Sub Command</h3>
+  {% for subfield in form.sub %}
+  <tr>
+      <td>{{ subfield }}</td>
+      <td>{{ subfield.label }}</td>
+  </tr>
+  {% endfor %}<br>
+
+  {{ form.age.label }}:
+  {{ form.age(min=0, max=100, oninput="outputUpdate(value)") }}
+  <output for="age" id="selected-age">{{ form.age.data }}</output><br>
+
   {{ form.submit }}
 </div>
 </fieldset>

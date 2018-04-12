@@ -54,7 +54,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     # HOST, PORT = "locallhost", 40007
     # HOST, PORT = "192.166.0.3", 40007
-    HOST, PORT = "192.166.1.4", 40007
+    HOST, PORT = "192.166.0.6", 40007
     # HOST, PORT = "192.166.0.3", 40007
     # HOST, PORT = "192.168.40.3", 40007
     # HOST, PORT = "192.168.185.11", 40007

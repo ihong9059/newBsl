@@ -10,6 +10,7 @@ from wtforms import StringField
 from wtforms.validators import DataRequired
 from flask_script import Manager
 from frame import Frame
+from wtforms.fields.html5 import DecimalRangeField
 
 from threading import Thread, Lock
 # from hksSer import serThread
@@ -38,7 +39,10 @@ class ControlForm(FlaskForm):
     sub = RadioField('Command', choices=[('103','Control'), ('108','GroupChange'),
     ('104','AutoMode'), ('109','Alternative'), ('102','Monitor'), ('110','Status'), ('101','Power')])
 
+    age = DecimalRangeField('Age', default=0)
+
     submit = SubmitField("Send")
+
     subDict = dict([('103','Control'), ('108','GroupChange'),
     ('104','AutoMode'), ('109','Alternative'),
     ('102','Monitor'), ('110','Status'), ('101','Power')])
