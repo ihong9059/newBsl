@@ -35,6 +35,9 @@ class ControlForm(FlaskForm):
     rxtx = RadioField('Destination RxTx', choices=[('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('32','Gateway')])
 
+    changed_rxtx = RadioField('changed RxTx', choices=[('1','Rx'),
+    ('2','Tx'), ('4','SRx'), ('32','Gateway')])
+
     sub = RadioField('Command', choices=[('103','Control'), ('108','GroupChange'),
     ('104','AutoMode'), ('109','Alternative'), ('102','Monitor'), ('110','Status'), ('101','Power')])
 
@@ -90,8 +93,8 @@ def control():
             if(form.subDict[sub] == 'GroupChange'):
                 cGid = int(request.form['changed_gid'])
                 cPid = int(request.form['changed_pid'])
-                cRxTx = int(rxtx)
-                # cRxTx = int(request.form['changed_rxtx'])
+                # cRxTx = rxtx
+                cRxTx = int(request.form['changed_rxtx'])
                 print('Now Group Change')
                 myFrame.rate[0] = cPid; myFrame.status[0] = cRxTx;
                 myFrame.level[0] = cGid%256; myFrame.Type[0] = int(cGid/256);

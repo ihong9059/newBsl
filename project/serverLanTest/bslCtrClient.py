@@ -6,7 +6,7 @@ returnMac = ''
 returnPowerOrStatus = ''
 
 def sendSocket(arr):
-    host='192.166.0.3'    #my Computer Address
+    host='192.166.1.4'    #my Computer Address
     # host='192.166.0.3'    #my Computer Address
     # host='192.166.0.3'    #my Computer Address
     # host='192.168.185.2'    #my Computer Address
