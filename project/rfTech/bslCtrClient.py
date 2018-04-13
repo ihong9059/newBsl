@@ -7,8 +7,8 @@ returnPowerOrStatus = ''
 
 def sendSocket(arr):
     myFrame = Frame()
-    
-    host='0.0.0.0'    #my Computer Address
+
+    host='192.166.0.8'    #my Computer Address
     port=40007
 
     print('hostName:{}, port:{}'.format(host, port))
