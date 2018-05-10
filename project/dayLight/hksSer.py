@@ -6,7 +6,7 @@ from frame import Frame
 class serThread(Thread):
     serFrame = Frame()
 
-    serFirstFlag = True
+    serRun = True
     writeFlag = False
     readFlag = False
     readStr = ''
@@ -29,15 +29,15 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
-        port = '/dev/ttyS0'
+        # port = '/dev/ttyS0'
         # port = '/dev/ttyUSB0'
-        port = 'COM5'
+        port = 'COM10'
         # port = 'COM7'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
             self.serDevice = ser
-            while True:
+            while self.serRun:
                 time.sleep(0.001)
                 try:
                     bytesToRead = ser.inWaiting()
