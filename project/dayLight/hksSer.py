@@ -29,7 +29,7 @@ class serThread(Thread):
             myfile.write(content)
 
     def run(self):
-        # port = '/dev/ttyS0'
+        port = '/dev/ttyS0'
         # port = '/dev/ttyUSB0'
         port = 'COM5'
         # port = 'COM7'

@@ -5,9 +5,10 @@ myIp = s.getsockname()[0]
 print(s.getsockname()[0])
 s.close()
 
-host=myIp    #my Computer Address
-# host='192.168.185.2'    #my Computer Address
+# host=myIp    #my Computer Address
+host='192.168.4.3'    #my Computer Address
 # host='192.168.50.19'  #Windows Address
+# host='192.168.185.2'    #my Computer Address
 port=50007
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 s.connect((host,port))

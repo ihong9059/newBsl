@@ -33,9 +33,6 @@ class ControlForm(FlaskForm):
     # changed_gid = IntegerField("Change Group Id:   ",[validators.Required("Please enter your name.")])
     # changed_pid = IntegerField("Change Private Id: ",[validators.Required("Please enter your name.")])
 
-    network = RadioField('Network', choices=[('1','T0'),
-    ('2','T1'), ('4','T2'), ('32','T3'), ('32','T4')])
-
     rxtx = RadioField('Destination RxTx', choices=[('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('32','Gateway')])
 
@@ -89,15 +86,14 @@ def control():
             pid = request.form['pid']
             level = request.form['level']
 
-            network = request.form['network']
             rxtx = request.form['rxtx']
             sub = request.form['sub']
 
             dt = datetime.now()
             print(dt.date(), dt.time())
 
-            print('gid:{}, pid:{}, net:{} level:{}, rxtx:{}, sub:{}'.format(gid, pid, network,
-            level, form.rxtxDict[rxtx], form.subDict[sub]))
+            print('gid:{}, pid:{}, level:{}, rxtx:{}, sub:{}'.format(gid, pid, level,
+             form.rxtxDict[rxtx], form.subDict[sub]))
              # returnSubLabel(sub)))
             writeStr = 'Send:: ' + str(dt.date()) + ':' + str(dt.time())
             writeStr += '--->gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level, returnSubLabel(sub))
@@ -115,7 +111,7 @@ def control():
             myFrame.rate[0] = 1; myFrame.status[0] = 0;
             myFrame.Type[0] = 1;
             myFrame.setLevel(int(level));
-            myFrame.micom[0] = int(network);
+
             myFrame.setRxTx(int(rxtx)); myFrame.setSub(int(sub))
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid));
             myFrame.setFrame()

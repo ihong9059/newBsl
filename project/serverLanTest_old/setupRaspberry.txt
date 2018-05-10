@@ -1,0 +1,92 @@
+1. NOOBS Download
+
+2. 한글 Font install
+	* sudo apt-get -y install ibus-hangul
+	* sudo apt-get -y install fonts-unfonts-core
+	* rasp-config의 locale을 ko로 setting후 reboot하여
+
+3. install samba
+  * sudo apt-get update
+  * sudo apt-get install samba
+
+4. using WinSCP in windows
+
+5. python3-> version 3.5.3
+
+6. python Module install
+	ex)pip3 install module __name__
+	pip3 install flask-script
+	pip3 install flask-wtf
+	pip3 install flask-moment
+	pip3 install flask-bootstrap
+
+7. Bluetooth setup
+sudo nano /lib/systemd/system/rfcomm.service
+
+[Uint]
+Description=RFCOMM service for Bluetooth
+After=bluetooth.service
+
+[Service]
+ExecStart=/usr/bin/rfcomm watch all &
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable rfcomm.service
+
+sudo reboot
+
+ps -ef|grep 'rfcomm'
+
+echo 'This is from RaspberryPi3'>/dev/rfcomm0
+
+cat /dev/rfcomm0
+
+8. Serial setup
+sudo nano /boot/config.txt --> enable_uart=1
+sudo nano /boot/cmdline.txt --> delete console=serial0, 115200
+Raspberry Pi Configuration, Interfaces Serial Disable
+
+9. GPIO
+sudo apt-get install rpi.gpio
+gpio readall
+
+10. wifi
+ipTime: default N2plus i(2GHz)
+rasberrypi is not acceptable at 5GHz Band
+ip: 192.166.0.1
+how to setup ip address to 192.166.0.3 ?
+at router, setup ip address and mac address up
+
+I went into my /etc/network/interfaces and edited the file to add my SSID and Network Password
+* don't use the old model(ipTime N104T)
+
+Raspberry Pi wifi 호환성 검토완료 Model
+ipTIME N2plus-i(표준)
+ipTIME A604-V3
+ipTIME CCD-IPTIME
+ipTIME N704-V3
+
+10. Auto Run
+https://www.youtube.com/watch?v=i7H70wf4iXY
+https://www.youtube.com/watch?v=Tvnrx-2QaUU
+sudo nano launcher.sh
+ex) python3 blsServer.py
+
+sudo chmod 755 launcher.sh
+sudo sh launcher.sh
+
+sudo mkdir logs
+sudo crontab -e
+	@reboot sh /home/pi/launcher.sh >/home/pi/logs/cronlog 2>&1
+
+sudo nano .bashrc
+python3 bslCtr.py runserver --host 0.0.0.0
+
+11. Install Library
+pip freeze >requirements.txt
+pip install -r requirements.txt
+
+for windows
+py -m pip install flask-script
