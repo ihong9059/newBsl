@@ -30,8 +30,9 @@ class serThread(Thread):
 
     def run(self):
         # port = '/dev/ttyS0'
+        port = '/dev/ttyACM0' #impossible for DK
         # port = '/dev/ttyUSB0'
-        port = 'COM10'
+        # port = 'COM5'
         # port = 'COM7'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:

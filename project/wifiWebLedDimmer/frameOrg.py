@@ -109,7 +109,6 @@ class Frame:
             else:
                 self.frame1 += '%02x' % numList[0]
         self.frame1 += '}'
-        print('Photo Value:{}'.format(self.dtime1[0]))
         with open('receive.txt','a') as fp:
             writeStr = 'Receive:: ' + str(dt.date()) + ':' + str(dt.time())
             print(writeStr, file = fp)
