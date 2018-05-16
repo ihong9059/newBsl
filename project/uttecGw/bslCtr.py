@@ -10,6 +10,7 @@ from wtforms import StringField
 from wtforms.validators import DataRequired
 from flask_script import Manager
 from frame import Frame
+from wtforms.fields.html5 import DecimalRangeField
 
 from threading import Thread, Lock
 # from hksSer import serThread
@@ -24,30 +25,40 @@ moment = Moment(app)
 manager = Manager(app)
 
 class ControlForm(FlaskForm):
-    gid = IntegerField("Group Id:   ",[validators.Required("Please enter your name.")])
-    pid = IntegerField("Private Id: ",[])
-    # pid = IntegerField("Private Id: ",[validators.Required("Please enter your name.")])
-    level = IntegerField("Level:     ",[])
+    gid = IntegerField("Group Id:   ",[validators.Required("Please enter number.")])
+    # pid = IntegerField("Private Id: ",[])
+    pid = IntegerField("Private Id: ",[validators.Required("Please enter number.")])
+    level = IntegerField("Level:     ",[validators.Required("Please enter number.")])
 
-    changed_gid = IntegerField("Change Group Id:   ",[validators.Required("Please enter your name.")])
-    changed_pid = IntegerField("Change Private Id: ",[validators.Required("Please enter your name.")])
+    # changed_gid = IntegerField("Change Group Id:   ",[validators.Required("Please enter number.")])
+    # changed_pid = IntegerField("Change Private Id: ",[validators.Required("Please enter number.")])
+
+    network = RadioField('Network', choices=[('0','T0'),
+    ('1','T1'), ('2','T2'), ('3','T3'), ('4','T4')])
 
     rxtx = RadioField('Destination RxTx', choices=[('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('32','Gateway')])
 
-    changed_rxtx = RadioField('changed RxTx', choices=[('1','Rx'),
-    ('2','Tx'), ('4','SRx'), ('32','Gateway')])
-
-    sub = RadioField('Command', choices=[('103','Control'), ('108','GroupChange'),
+    # sub = RadioField('Command', choices=[('103','Control'), ('108','GroupChange'),
+    # ('104','AutoMode'), ('109','Alternative'), ('102','Monitor'), ('110','Status'), ('101','Power')])
+    sub = RadioField('Command', choices=[('103','Control'),
     ('104','AutoMode'), ('109','Alternative'), ('102','Monitor'), ('110','Status'), ('101','Power')])
 
+    age = DecimalRangeField('Age', default=0)
+
     submit = SubmitField("Send")
-    subDict = dict([('103','Control'), ('108','GroupChange'),
+
+    # subDict = dict([('103','Control'), ('108','GroupChange'),
+    # ('104','AutoMode'), ('109','Alternative'),
+    # ('102','Monitor'), ('110','Status'), ('101','Power')])
+
+    subDict = dict([('103','Control'),
     ('104','AutoMode'), ('109','Alternative'),
     ('102','Monitor'), ('110','Status'), ('101','Power')])
 
-    rxtxDict = dict([('1','Rx'),
-    ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
+    # rxtxDict = dict([('1','Rx'),
+    # ('2','Tx'), ('4','SRx'), ('16','Repeat'), ('32','Gateway'), ('64','Master')])
+    rxtxDict = dict([('1','Rx'),('2','Tx'), ('4','SRx'), ('32','Gateway')])
 
 def FileSave(filename,content):
     import io
@@ -63,7 +74,6 @@ myFrame = Frame()
 from datetime import datetime
 @app.route('/', methods=['GET', 'POST'])
 def control():
-    # startSer()
     form = ControlForm()
     if request.method == 'POST':
         if form.validate() == False:
@@ -77,53 +87,41 @@ def control():
             pid = request.form['pid']
             level = request.form['level']
 
+            network = request.form['network']
             rxtx = request.form['rxtx']
             sub = request.form['sub']
 
             dt = datetime.now()
             print(dt.date(), dt.time())
 
-            print('gid:{}, pid:{}, level:{}, rxtx:{}, sub:{}'.format(gid, pid, level,
-             form.rxtxDict[rxtx], form.subDict[sub]))
+            print('gid:{}, pid:{}, net:{} level:{}, rxtx:{}, sub:{}'.format(gid, pid, network,
+            level, form.rxtxDict[rxtx], form.subDict[sub]))
              # returnSubLabel(sub)))
             writeStr = 'Send:: ' + str(dt.date()) + ':' + str(dt.time())
             writeStr += '--->gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level, returnSubLabel(sub))
             FileSave('send.txt', writeStr+'\n')
 
-            if(form.subDict[sub] == 'GroupChange'):
-                cGid = int(request.form['changed_gid'])
-                cPid = int(request.form['changed_pid'])
-                # cRxTx = rxtx
-                cRxTx = int(request.form['changed_rxtx'])
-                print('Now Group Change')
-                myFrame.rate[0] = cPid; myFrame.status[0] = cRxTx;
-                myFrame.level[0] = cGid%256; myFrame.Type[0] = int(cGid/256);
-            else:
-                myFrame.rate[0] = 1; myFrame.status[0] = 0;
-                myFrame.Type[0] = 1;
-                myFrame.setLevel(int(level));
-
-            myFrame.setRxTx(int(rxtx)); myFrame.setSub(int(sub))
-            myFrame.setGid(int(gid)); myFrame.setPid(int(pid));
+            # if(form.subDict[sub] == 'GroupChange'):
+            #     cGid = int(request.form['changed_gid'])
+            #     cPid = int(request.form['changed_pid'])
+            #     cRxTx = int(rxtx)
+            #     # cRxTx = int(request.form['changed_rxtx'])
+            #     print('Now Group Change')
+            #     myFrame.rate[0] = cPid; myFrame.status[0] = cRxTx;
+            #     myFrame.level[0] = cGid%256; myFrame.Type[0] = int(cGid/256);
+            # else:
+            myFrame.rate[0] = 1; myFrame.status[0] = 0;
+            myFrame.Type[0] = 1;
+            myFrame.level[0]= int(level);
+            myFrame.micom[0] = int(network);
+            myFrame.rxtx[0] = int(rxtx); myFrame.sub[0] = int(sub)
+            myFrame.gid[0] = int(gid); myFrame.pid[0] = int(pid);
             myFrame.setFrame()
             print('------------ Ctr Start ----------------')
             bslCtrClient.sendSocket(myFrame.getFrame())
-            # print('bslCtrClient.sendSocket and wait return')
-            timeOutCount = 0
-            while bslCtrClient.receiveFlag == False:
-                time.sleep(0.001)
-                timeOutCount += 1
-                if timeOutCount > 1000:
-                    break
 
-            if bslCtrClient.receiveFlag:
-                # print('I received frame from gateway')
-                flash('Result::'+bslCtrClient.returnPowerOrStatus)
-                flash('Mac Add:'+bslCtrClient.returnMac)
-                bslCtrClient.receiveFlag = False
-            else:
-                print('Time out')
-                flash('Time out')
+            flash('Result::'+bslCtrClient.returnPowerOrStatus)
+            flash('Add:'+bslCtrClient.returnMac)
             # mySer.send(myFrame.getFrame())
             print('------------ Ctr End ----------------')
             return render_template('control.html', form=form)

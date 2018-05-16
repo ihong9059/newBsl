@@ -4,9 +4,10 @@ from hksSer import serThread
 from datetime import datetime
 from frame import Frame
 
-mySer = serThread()
-
-# tcpCount = 0
+# port = '/dev/ttyS0'
+# port = '/dev/ttyUSB0'
+ttyS0 = serThread('COM7')
+rs485Ser = serThread('COM30')
 class MyTCPHandler(socketserver.BaseRequestHandler):
     myFrame = Frame()
 
@@ -14,19 +15,30 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         import io
         with open(filename, "a+") as myfile:
             myfile.write(content)
+    def procSerial(self, port):
+        if port == 0:
+            ser = mySer
 
     def handle(self):
         dt = datetime.now()
         # self.request is the TCP socket connected to the client
-        print('------------------ server Start ----------------------')
+        print('Rasp-->------------------ server Start ----------------------')
         self.data = self.request.recv(1024).strip()
-        testStr = "{} wrote: when {}:{} \n".format(self.client_address[0],
+        self.myFrame.parseFrame(str(self.data,'utf-8'))
+        print('Rasp-->Network Type:{}'.format(self.myFrame.micom1[0]))
+
+        testStr = "Rasp-->{} wrote: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
         testStr += str(self.data,'utf-8') + '\n'
         print(testStr)
-        # self.FileSave('LanReceive.txt', 'From Server:'+testStr+'\n')
-        mySer.send(str(self.data,'utf-8'))
+        
+        type = self.myFrame.micom1[0]
+        if (type == 0) || (type == 1) ||(type == 2):
+            mySer=ttyS0; print('Type0,1,2')
+        else:
+            mySer=rs485Ser; print('Tpye3,4')
 
+        mySer.send(str(self.data,'utf-8'))
         end = True
         next = time.time() + 2
         while end:
@@ -43,23 +55,30 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         testStr = "{} return: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
         testStr += self.data + '\n'
-        # self.FileSave('LanSend.txt', 'From Gateway:'+testStr+'\n')
 
         sendStr = bytearray(self.data.upper(),'utf-8')
         self.request.sendall(sendStr)
-        print('return:' + self.data)
-        print('------------------ server End ----------------------')
+        print('Rasp-->' + self.data)
+        print('Rasp-->------------------ server End ----------------------')
         # self.data = self.request.recv(1024).strip()
 
-if __name__ == "__main__":
-    # HOST, PORT = "locallhost", 40007
-    # HOST, PORT = "192.166.0.3", 40007
+def runServer():
     HOST, PORT = "0.0.0.0", 40007
     # HOST, PORT = "192.166.0.3", 40007
     # HOST, PORT = "192.168.40.3", 40007
     # HOST, PORT = "192.168.185.11", 40007
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-    mySer.start()
-    print('Activate the server; this will keep running until you')
-    print('interrupt the program with Ctrl-C')
-    server.serve_forever()
+    ttyS0.start()
+    rs485Ser.start()
+
+    print('UTTEC Gateway Server::: interrupt the program with Ctrl-C')
+    try:
+        server.serve_forever()
+    except:
+        print('End of bslServer')
+        ttyS0.runSerial = False
+        rs485Ser.runSerial = False
+        print('mySer.runSerial = False')
+
+if __name__ == "__main__":
+    runServer()

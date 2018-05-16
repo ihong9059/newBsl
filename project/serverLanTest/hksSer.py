@@ -31,30 +31,30 @@ class serThread(Thread):
     def run(self):
         # port = '/dev/ttyS0'
         # port = '/dev/ttyUSB0'
-        port = 'COM5'
-        # port = 'COM7'
+        # port = 'COM5'
+        port = 'COM7'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
             self.serDevice = ser
             while True:
-                time.sleep(0.001)
                 try:
+                    time.sleep(0.001)
                     bytesToRead = ser.inWaiting()
                     if bytesToRead:
                         sTemp = str(ser.read(bytesToRead),'utf-8')
                         self.readStr += sTemp;
-                        if bytesToRead == 1:
-                            print(sTemp, end='')
-                        else:
-                            print(':'+sTemp)
-
                         if self.readStr.find('}') != -1:
                             if self.serFrame.parseFrame(self.readStr):
                                 self.returnFrame =  self.serFrame.frame1
                                 self.readStr = ''
                                 self.newFrameFlag = True
                         self.readFlag = True
+
+                        if self.readStr.rfind('\n') != -1:
+                            indexStr = self.readStr.rfind('\n')
+                            print(self.readStr[:indexStr], end = '')
+                            self.readStr = self.readStr[indexStr:]
                 except:
                     print('Ser except')
 

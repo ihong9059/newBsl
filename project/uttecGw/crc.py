@@ -80,3 +80,35 @@ class CRC:
                 x = x >> 1
                 y = y << 1
         return r
+
+
+# # Predefined CRC calcs
+# class CRC16(CRC):
+#     '''
+#     CRC-16
+#     Order = 16
+#     Polynomial = 0x8005
+#     Initial value = 0xffff
+#     Final XOR = 0
+#     Reverse = True
+#     '''
+#     def __init__(self):
+#         CRC.__init__(self, 16, 0x8005, 0xffff, 0, True)
+#
+#
+# class CRC32(CRC):
+#     '''
+#     CRC-32
+#     Order = 32
+#     Polynomial = 0x4c11db7
+#     Initial value = 0xffffffff
+#     Final XOR = 0xffffffff
+#     Reverse = True
+#     '''
+#     def __init__(self):
+#         CRC.__init__(self, 32, 0x4c11db7, 0xffffffff, 0xffffffff, True)
+
+# if __name__ == '__main__':
+#     from doctest import testmod
+#     print('This is Crc Module')
+    # testmod()

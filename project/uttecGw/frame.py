@@ -1,8 +1,7 @@
-# eMst: 64, eGw: 32,
 from datetime import datetime
 
 class Frame:
-    Master = 64; ServerReq = 100
+    Master = 64; ServerReq = 100;
     returnPowerOrStatus = ''
     returnMac = ''
 
@@ -42,30 +41,6 @@ class Frame:
     clearBuffFlag = False
     newFrameFlag = False
 
-    def setPid(self, vaule):
-        self.pid[0] = vaule
-
-    def setRxTx(self, vaule):
-        self.rxtx[0] = vaule
-
-    def setGid(self, vaule):
-        self.gid[0] = vaule
-
-    def setHigh(self, vaule):
-        self.high[0] = vaule
-
-    def setLow(self, vaule):
-        self.low[0] = vaule
-
-    def setLevel(self, vaule):
-        self.level[0] = vaule
-
-    def setCmd(self, vaule):
-        self.cmd[0] = vaule
-
-    def setSub(self, vaule):
-        self.sub[0] = vaule
-
     def getFrame(self):
         return self.frame
 
@@ -95,7 +70,8 @@ class Frame:
         self.frame += '}'
         with open('send.txt','a') as fp:
             print(self.frame, file = fp)
-        print(self.frame)
+        print('SendFrame:{}'.format(self.frame))
+        # self.returnPowerOrStatus = 'No Ack From Gateway'
 
     def setReceiveFrame(self):
         dt = datetime.now()
@@ -120,22 +96,29 @@ class Frame:
         return crc16.update(data)
 
     def printSubName(self, sub):
+        result = ''
         if(sub == 103):
-            print('Control Ack')
-        elif( sub == 108 ):
-            print('GroupChange Ack')
+            result = 'Control Ack'
         elif sub == 104:
-            print('AutoMode Ack')
+            result = 'AutoMode Ack'
+        elif( sub == 102 ):
+            result = 'Monitor Ack'
+        elif( sub == 108 ):
+            result = 'GroupChange Ack'
+        elif( sub == 109 ):
+            result = 'Alternaibe Ack'
         elif sub == 110:
-            print('Status Ack')
+            result = 'Status Ack'
         elif sub == 101:
-            print('PowerRead Ack')
+            result = 'PowerRead Ack'
         else:
-            print('Sub Commend Error')
+            result = 'Error:{}'.format(sub)
+        return result
 
     def parseFrame(self, inFrame):
         first = inFrame.rfind('{')
         last = inFrame.rfind('}')
+        self.returnPowerOrStatus = 'No Return From Gateway'
         if last > 150:
             self.clearBuffFlag = True
         else:
@@ -167,81 +150,38 @@ class Frame:
                 count += 1
 
             if crcResult == self.crc1[0]:
-                print('Crc Ok, Passed')
-                if self.sub1[0] == 101:
+                # print('Crc Ok, Passed')
+                if self.sub1[0] == 101: #Power Read
                     print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
                         self.dtime1[0]*0x10000))
                     self.returnPowerOrStatus = 'Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
                         self.dtime1[0]*0x10000)
-                elif self.sub1[0] == 110:
-                    print('Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
-                        (self.high1[0] + self.low1[0]*256), self.rate1[0]))
-                    self.returnPowerOrStatus = 'Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
-                        (self.high1[0] + self.low1[0]*256), self.rate1[0])
-                else:
-                    self.returnPowerOrStatus = 'Control Command'
 
-                self.printSubName(self.sub1[0])
+                elif self.sub1[0] == 110:   #Status
+                    print('Photo:{} traffic:{} status:{} level:{}'.format(self.dtime1[0],
+                        (self.high1[0] + self.low1[0]*256), self.rate1[0], self.level1[0]))
+
+                    self.returnPowerOrStatus = 'Photo:{} traffic:{} status:{} level:{}'.format(self.dtime1[0],
+                        (self.high1[0] + self.low1[0]*256), self.rate1[0], self.level1[0])
+                else:
+                    self.returnPowerOrStatus = 'Command:{}'.format(self.printSubName(self.sub1[0]))
+
                 print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
-                print('{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
-                    self.tbd21[0]))
-                self.returnMac = '{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
-                    self.tbd21[0])
+                # print('{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
+                    # self.tbd21[0]))
+                    # pidOrg1, rxtxOrg1, sensor1, micom1, gidOrg1,
+                self.returnMac = 'Gid:{}, Pid:{}, RxTx:{}:::{:04x},{:04x},{:04x}'.format(
+                    self.gidOrg1[0], self.pidOrg1[0], self.rxtxOrg1[0],
+                    self.tbd01[0],self.tbd11[0],self.tbd21[0])
                 self.newFrameFlag = True
                 self.setReceiveFrame()
             else:
                 print('Crc error:{},{}'.format(crcResult, self.crc1[0]))
+
             return True
 
         else:
             return False
-
-    # def parseReturnFrame(self, inFrame):
-    #     first = inFrame.rfind('{')
-    #     last = inFrame.rfind('}')
-    #
-    #     if (last - first -1) == 68:
-    #         result = inFrame[(first+1):last]
-    #
-    #         count = 0
-    #         temp = list(); self.byteList1 = list();
-    #         for s in range(1,35):
-    #             ss = result[count:count+2]
-    #             temp.append(int(ss,16))
-    #             self.byteList1.append(int(ss,16))
-    #             count += 2
-    #
-    #         temp = temp[0:(len(temp)-2)]
-    #         crcIn = bytearray(temp)
-    #         crcResult = self.getCrc(crcIn)
-    #
-    #         count = 0
-    #         for i in self.frameList1:
-    #             if i[1] == 2:
-    #                 i[0] = self.byteList1[count]
-    #                 count += 1
-    #                 i[0] += self.byteList1[count]*256
-    #             else:
-    #                 i[0] = self.byteList1[count]
-    #             count += 1
-    #
-    #         if crcResult == self.crc1[0]:
-    #             print('Crc Ok --> Photo:{} traffic:{} status:{}'.format(self.dtime1[0],
-    #                 (self.high1[0] + self.low1[0]*256), self.rate1[0]))
-    #             self.printSubName(self.sub1[0])
-    #             print('Cmd:{}, Sub:{}'.format(self.cmd1[0], self.sub1[0]))
-    #             print('Power:{}'.format(self.rate1[0]+self.status1[0]*0x100+
-    #                 self.dtime1[0]*0x10000))
-    #             print('{:04x},{:04x},{:04x}'.format(self.tbd01[0],self.tbd11[0],
-    #                 self.tbd21[0]))
-    #             self.newFrameFlag = True
-    #             self.setReceiveFrame()
-    #         else:
-    #             print('Crc error:{},{}'.format(crcResult, self.crc1[0]))
-    #         return True
-    #
-    #     else:
-    #         return False
 
     def testFrame(self):
         print('----------- testFrame --------------')

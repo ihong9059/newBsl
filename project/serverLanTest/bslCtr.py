@@ -33,8 +33,8 @@ class ControlForm(FlaskForm):
     # changed_gid = IntegerField("Change Group Id:   ",[validators.Required("Please enter your name.")])
     # changed_pid = IntegerField("Change Private Id: ",[validators.Required("Please enter your name.")])
 
-    network = RadioField('Network', choices=[('1','T0'),
-    ('2','T1'), ('4','T2'), ('32','T3'), ('32','T4')])
+    network = RadioField('Network', choices=[('0','T0'),
+    ('1','T1'), ('2','T2'), ('3','T3'), ('4','T4')])
 
     rxtx = RadioField('Destination RxTx', choices=[('1','Rx'),
     ('2','Tx'), ('4','SRx'), ('32','Gateway')])

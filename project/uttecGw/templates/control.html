@@ -8,7 +8,7 @@ function outputUpdate(age) {
 </script>
 </head>
 <body>
-<h2 style="text-align: center;">UTTEC Controller</h2>
+<h2 style="text-align: left;">UTTEC Controller</h2>
 {% for message in form.gid.errors %}
 <div>{{ message }}</div>
 {% endfor %}
@@ -38,16 +38,24 @@ function outputUpdate(age) {
 </div>
 {% endfor %}
 
-<form action = '' method = post>
+<form style="width:350px;" action = '' method = post>
 <fieldset>
 <legend>Control Form</legend>
 {{ form.hidden_tag() }}
-<div style=font-size:20px;font-weight:bold;margin-left:50px;>
+<div style="font-size:15px; font-weight:bold; margin-left:20px; ">
   {{ form.gid.label }}{{ form.gid }}<br>
   {{ form.pid.label }}{{ form.pid }}<br>
-  {{ form.level.label }}{{ form.level }}<br><br>
+  {{ form.level.label }}{{ form.level }}<br>
 
-  <h3>RxTx Role</h3>
+  <h4>Network Type</h4>
+  {% for subfield in form.network %}
+  <tr>
+      <td>{{ subfield }}</td>
+      <td>{{ subfield.label }}</td>
+  </tr>
+  {% endfor %}<br>
+
+  <h4>RxTx Role</h4>
   {% for subfield in form.rxtx %}
   <tr>
       <td>{{ subfield }}</td>
@@ -55,7 +63,7 @@ function outputUpdate(age) {
   </tr>
   {% endfor %}<br>
 
-  <h3>Sub Command</h3>
+  <h4>Sub Command</h4>
   {% for subfield in form.sub %}
   <tr>
       <td>{{ subfield }}</td>
@@ -71,5 +79,12 @@ function outputUpdate(age) {
 </div>
 </fieldset>
 </form>
+<p>
+  T0:<span style="background-color:#888888"> All Rf24 </span>
+  T1:<span style="background-color:#888888"> All LoRa  </span>
+  T2:<span style="background-color:#888888"> LoRa and Rf24 </span> <br>
+  T3:<span style="background-color:#888888"> RS485 and Rf24 </span>
+  T4:<span style="background-color:#888888"> RS485 and LoRa </span>
+</p>
 </body>
 </html>

@@ -20,6 +20,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # self.request is the TCP socket connected to the client
         print('------------------ server Start ----------------------')
         self.data = self.request.recv(1024).strip()
+        if self.myFrame.parseFrame(str(self.data,'utf-8')):
+            print('-- This is server frame-----------{}'.format(self.myFrame.micom1[0]))
+        #     print(self.myFrame.frame1)
         testStr = "{} wrote: when {}:{} \n".format(self.client_address[0],
         dt.date(), dt.time())
         testStr += str(self.data,'utf-8') + '\n'
